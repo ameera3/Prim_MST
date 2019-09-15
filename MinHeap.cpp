@@ -78,8 +78,8 @@ MinHeapNode MinHeap::top()
 // Decrease key and fix any heap violations that occur
 void MinHeap::decreaseKey(int i, int newVal)
 {
-	heapArray[i]->cost = newVal;
-	while( i > 0 && heapArray[parent(i)]->cost > heapArray[i]->cost ){
+	heapArray[i].cost = newVal;
+	while( i > 0 && heapArray[parent(i)].cost > heapArray[i].cost ){
 		exchange(&heapArray[i], &heapArray[parent(i)], i, parent(i));
 		i = parent(i);
 	}
@@ -105,7 +105,7 @@ MinHeapNode MinHeap::pop()
         }
 
         // Store the minimum value, and remove it from heap 
-        MinHeapNode* root = heapArray[0];
+        MinHeapNode root = heapArray[0];
         heapArray[0] = heapArray[heapSize-1];
         heapSize--;
         minHeapify(0);
