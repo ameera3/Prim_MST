@@ -45,7 +45,7 @@ class Edge {
 	int cost;
 
         // Constructor 
-        Edge(Vertex* low, Vertex* high, int weight) :
+        Edge(MinHeapNode* low, MinHeapNode* high, int weight) :
             source(low), dest(high), cost(weight) {} 
 
 };

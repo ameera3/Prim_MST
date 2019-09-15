@@ -18,15 +18,15 @@
 class MinHeap
 {
     // pointer to array representation of heap		
-    MinHeapNode* heapArray; 
+    MinHeapNode** heapArray; 
 
     // number of nodes in heap 
-    int heapSize;           
-
+    int heapSize;       
+    
     public:
 
 	// Constructor  
-	MinHeap(MinHeapNode a[], int size);
+	MinHeap(MinHeapNode* a[], int size);
 
 	// Heapify a subtree with root at given index j 
 	void minHeapify(int j);
@@ -44,16 +44,16 @@ class MinHeap
 	int parent(int j);
 
 	// Analogue of priority queue top 
-	MinHeapNode top();
+	MinHeapNode* top();
 
 	// Analogue of priority queue pop
-	MinHeapNode pop(); 
+	MinHeapNode* pop(); 
 
 	// Decrease Key and fix any heap violations that occur
 	void decreaseKey(int i, int newVal);
 
 	// swaps two min heap nodes
-	void exchange(MinHeapNode* a, MinHeapNode* b, int aPos, int bPos);
+	void exchange(MinHeapNode** a, MinHeapNode** b, int aPos, int bPos);
 
 	// destructor
 	~MinHeap();

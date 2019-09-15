@@ -8,7 +8,7 @@
 
 // Constructor: Builds a heap from a given array a[] 
 // of given size 
-MinHeap::MinHeap(MinHeapNode a[], int size)
+MinHeap::MinHeap(MinHeapNode* a[], int size)
 {
 	heapSize = size;
 	heapArray = a; // store address of array 
@@ -28,9 +28,9 @@ void MinHeap::minHeapify(int j)
 	int l = left(j);
 	int r = right(j);
 	int smallest = j;
-	if (l < heapSize && heapArray[l].cost < heapArray[j].cost)
+	if (l < heapSize && heapArray[l]->cost < heapArray[j]->cost)
 		smallest = l;
-	if (r < heapSize && heapArray[r].cost < heapArray[smallest].cost)
+	if (r < heapSize && heapArray[r]->cost < heapArray[smallest]->cost)
 		smallest = r;
 	if (smallest != j)
 	{
@@ -70,7 +70,7 @@ int MinHeap::parent(int j)
 }	
 
 // Analogue of priority queue top
-MinHeapNode MinHeap::top() 
+MinHeapNode* MinHeap::top() 
 { 
 	return heapArray[0]; 
 }
@@ -78,26 +78,29 @@ MinHeapNode MinHeap::top()
 // Decrease key and fix any heap violations that occur
 void MinHeap::decreaseKey(int i, int newVal)
 {
-	heapArray[i].cost = newVal;
-	while( i > 0 && heapArray[parent(i)].cost > heapArray[i].cost ){
+	heapArray[i]->cost = newVal;
+	while( i > 0 && heapArray[parent(i)]->cost > heapArray[i]->cost ){
 		exchange(&heapArray[i], &heapArray[parent(i)], i, parent(i));
 		i = parent(i);
 	}
 }		
 
 // exchanges two min heap nodes
-void MinHeap::exchange(MinHeapNode* a, MinHeapNode* b, int aPos, int bPos) 
+void MinHeap::exchange(MinHeapNode** a, MinHeapNode** b, int aPos, int bPos) 
 {
-	a->heapPos = bPos;
-	b->heapPos = aPos;
-	MinHeapNode temp = *a;
+	(*a)->heapPos = bPos;
+	(*b)->heapPos = aPos;
+	MinHeapNode* temp = *a;
 	*a = *b;
 	*b = temp;
 }
 
 // Analogue of priority queue pop 
-MinHeapNode MinHeap::pop()
+MinHeapNode* MinHeap::pop()
 {
+	if (heapSize <= 0) {
+		return nullptr;
+	}
         if (heapSize == 1)
         {
                 heapSize--;
@@ -105,7 +108,7 @@ MinHeapNode MinHeap::pop()
         }
 
         // Store the minimum value, and remove it from heap 
-        MinHeapNode root = heapArray[0];
+        MinHeapNode* root = heapArray[0];
         heapArray[0] = heapArray[heapSize-1];
         heapSize--;
         minHeapify(0);
