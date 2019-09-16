@@ -20,42 +20,48 @@
 using namespace std;
 
 MinHeapNode** loadfromFile(const char* filename, 
-		vector<MinHeapNode*>& node_map
+		vector<MinHeapNode*>& node_map,
 		vector<Edge*>& edge_map) {
 
 	// used to get each line from input file
 	string line;
+
+	// used for parsing line
+	stringstream ss;
+
+	// used for parsing line
+	string temp;
 
 	// input file stream
 	ifstream* in = new ifstream(filename);
 
 	// Raise an error if file can't be read
 	if( in->eof() ){
-		cerr << Failed to read " << filename << "!\n";
+		cerr << "Failed to read " << filename << "!\n";
 		delete in;
 		exit(-1);
 	}
 
 	// store the total number of vertices and edges
 	getline(*in, line);
-	stringstream ss; // used for parsing line
 	ss << line; // storing line into stringstream
-	string temp; // used for parsing line
-	int numVertices; // number of vertices
-	int numEdges; // number of edges
-	ss >> temp; // extracting number of vertices
-	stringstream(temp) >> numVertices // store in numVertices
+	int numVertices, numEdges; // number of vertices and edges
+	ss >> temp; // extract number of vertices
+        stringstream(temp) >> numVertices;
 	temp = ""; // clear temp
-        ss >> temp; // extract number of edges
-	stringstream(temp) >> numEdges; // store in numEdges
+	ss >> temp; // extract number of edges
+	stringstream(temp) >> numEdges;
+	temp = ""; // clear temp	
 	ss.str(""); // reset string stream to be empty
+	ss.clear(); // reset error flags
 
 	// create array of numVertices MinHeapNode* pointers
-	MinHeapNode** hpArray = new MinHeapNode[numVertices];
+	MinHeapNode** hpArray = new MinHeapNode*[numVertices];
 
 	// fill the array with MinHeapNodes and create the node map
 	for(int i = 0; i < numVertices; ++i) {
-		hpArray[i] = node_map[i] = new MinHeapNode(i + 1);
+		node_map.push_back( new MinHeapNode(i+1) );
+		hpArray[i] = node_map[i];
 	}
 
 	// to check if we parsed file correctly
@@ -63,44 +69,32 @@ MinHeapNode** loadfromFile(const char* filename,
 
 	while(getline(*in, line)) {
 
-		int source; // source node
-		int dest; // destination node
+		int source; // source label
+		int dest; // destination label
 		int weight; // edge weight
 
-		ss >> temp; // extract source
-
-		// check source is int 
-		if( stringstream(temp) >> source ){
-
-			// clear temp
-			temp = "";
-
-			// extract dest
-			ss >> temp;
-
-			// check dest is int
-			if( stringstream(temp) >> dest ){
-
-				// clear temp
-				temp = "";
-
-				// extract weight, create edge, add edge to
-				// incidentEdges of sourceNode and destNode,
-				// add edge to edge_map
-				if( stringstream(temp) >> weight ){
-					MinHeapNode* sourceNode = node_map[source];
-					MinHeapNode* destNode = node_map[dest];
-					Edge* edge = 
-					new Edge(sourceNode, destNode, weight);
-					edge_map[edgeCount] = edge;
-					(sourceNode->incidentEdges).push_back(edge);
-					(destNode->incidentEdges).push_back(edge);
-				}
-			}	
-		}
-
-		// reset the string stream to be empty
+		ss << line; // storing line in stringstream
+		ss >> temp; // extract source label
+		stringstream(temp) >> source; // store source label
+		temp = ""; // clear temp
+		ss >> temp; // extract dest label
+		stringstream(temp) >> dest; // store dest label
+	        temp = ""; // clear temp
+		ss >> temp; // extract edge weight
+		stringstream(temp) >> weight;	
+		MinHeapNode* sourceNode = node_map[source-1];
+		MinHeapNode* destNode = node_map[dest-1];
+		edge_map.push_back( 
+			new Edge(sourceNode, destNode, weight) );
+		(sourceNode->incidentEdges).push_back(
+			edge_map[edgeCount]);
+		(destNode->incidentEdges).push_back(
+			edge_map[edgeCount]);
+		
+		// reset the string stream to be empty and
+		// reset error flags
 		ss.str("");
+		ss.clear();
 
 		// increment the edge count
 		++edgeCount;
@@ -132,11 +126,16 @@ int main(int argc, char** argv) {
 
 	vector<MinHeapNode*> myNodeMap;
 	vector<Edge*> myEdgeMap;
-	MinHeap** myHeapArray = loadfromFile(argv[IN_IDX], myNodeMap, myEdgeMap);
+	MinHeapNode** myHeapArray = loadfromFile(argv[IN_IDX], myNodeMap, myEdgeMap);
 	
-	
-
-	return 0;
+	// no memory leaks here
+	for( auto it = myNodeMap.begin(); it != myNodeMap.end(); ++it ){
+		delete *it;
+	}
+	for( auto it = myEdgeMap.begin(); it != myEdgeMap.end(); ++it ){
+		delete *it;
+	}
+	delete[] myHeapArray;	
 
 }
 
