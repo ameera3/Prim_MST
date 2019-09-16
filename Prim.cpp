@@ -48,6 +48,7 @@ int Prim(MinHeapNode** hpArray, int size) {
 		}	
 	}
 
+	delete heap;
 	return costMST;	
 	
 }	
