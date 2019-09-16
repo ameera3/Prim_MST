@@ -19,13 +19,36 @@
 
 using namespace std;
 
+/* Prim's Algorithm: 
+ * 1. Initialize a tree with the vertex labeled 1.
+ * 2. Grow the tree by one edge: of the edges that connect the tree 
+ * to vertices not yet in the tree, find the minimum-weight edge, 
+ * and transfer it to the tree. 
+ * 3. Repeat step 2 until all vertices are in the tree.
+ */
 int Prim(MinHeapNode** hpArray, int size) {
 
+	// cost of a minimum spanning tree
 	int costMST = 0;
+
+	// Step 1: initialize a tree with the vertex labeled 1
 	MinHeapNode* v1 = hpArray[0];
 	v1->cost = 0;
 
+	// create heap from array
 	MinHeap* heap = new MinHeap(hpArray, size);
+
+	/* Repeat the following steps until the heap is empty:
+	 * Find and remove a vertex v from heap having minimum cost. 
+	 * Add the cost of v to the cost of the MST.
+	 * Pop v from the heap
+	 * Loop over the edges vw connecting v to other vertices w. 
+	 *  For each such edge, if w has not been popped from heap 
+	 *  and vw has smaller weight than cost of w, perform the 
+	 *  following steps:
+		Set w's cost to the cost of edge vw
+		Set w's connecting edge to point to edge vw.
+	 */		
 	while( !heap->empty() ) {
 		MinHeapNode* current = heap->top();
 		costMST += current->cost;
@@ -48,6 +71,7 @@ int Prim(MinHeapNode** hpArray, int size) {
 		}	
 	}
 
+	// no memory leaks here
 	delete heap;
 	return costMST;	
 	
@@ -158,12 +182,15 @@ int main(int argc, char** argv) {
 		return -1;
 	}
 
+	// read input file and build the heap
 	vector<MinHeapNode*> myNodeMap;
 	vector<Edge*> myEdgeMap;
 	MinHeapNode** myHeapArray = loadfromFile(argv[IN_IDX], myNodeMap, myEdgeMap);
 
+	// run Prim's algorithm
 	int myMSTcost = Prim(myHeapArray, myNodeMap.size());
 
+	// output the cost of an MST
 	cout << "cost: " << myMSTcost << endl;
 
 	// no memory leaks here

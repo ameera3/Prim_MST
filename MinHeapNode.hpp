@@ -17,7 +17,9 @@ class Edge;
  * Instance Variables: label (integer vertex label)
  *                     cost (integer cost of cheapest edge connecting vertex 
  *		             to MST)
- *		       heapPos (position in heap -- if -1 then popped from heap)	     
+ *		       heapPos (position in heap)
+ *		       popped (bool indicating whether vertex has been popped from
+ *		               heap or not)	     
  *		       connEdge (cheapest edge connecting vertex to MST)
  *		       incidentEdges (vector of edges incident with vertex)
  * Public Methods: Constructor
