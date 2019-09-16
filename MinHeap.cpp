@@ -109,7 +109,7 @@ MinHeapNode* MinHeap::pop()
 
         // Store the minimum value, and remove it from heap 
         MinHeapNode* root = heapArray[0];
-        heapArray[0] = heapArray[heapSize-1];
+        exchange(&heapArray[0], &heapArray[heapSize-1], 0, heapSize - 1);
         heapSize--;
         minHeapify(0);
 

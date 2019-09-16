@@ -33,8 +33,11 @@ class MinHeapNode
 		/* cost of cheapest edge connecting vertex to MST */    
 		int cost;
 
-		/* position in heap -- if -1 then popped from heap */
+		/* position in heap */
 		int heapPos;
+
+		/* whether it has been popped from heap or not */
+		bool popped;
 
 		/* cheapest edge connecting vertex to MST */
 		Edge* connEdge;
@@ -45,7 +48,7 @@ class MinHeapNode
 		/* Constructor */
 		MinHeapNode(int name) :
 			label(name), cost(std::numeric_limits<int>::max()),
-       			heapPos(name-1)	{}
+       			heapPos(name-1), popped(false)	{}
 
 };
 

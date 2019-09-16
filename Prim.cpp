@@ -19,6 +19,39 @@
 
 using namespace std;
 
+int Prim(MinHeapNode** hpArray, int size) {
+
+	int costMST = 0;
+	MinHeapNode* v1 = hpArray[0];
+	v1->cost = 0;
+
+	MinHeap* heap = new MinHeap(hpArray, size);
+	while( !heap->empty() ) {
+		MinHeapNode* current = heap->top();
+		costMST += current->cost;
+		current->popped = true;
+		heap->pop();
+		for (auto it = ((current)->incidentEdges).begin(); 
+		  it != ((current)->incidentEdges).end();
+		  ++it) {
+		  	MinHeapNode* otherVertex = (*it)->dest;
+			if ( (*it)->source != current ) {
+				otherVertex = (*it)->source;
+			}
+			if ( !otherVertex->popped ) {
+				if ( (*it)->cost < otherVertex->cost ) {
+					otherVertex->connEdge = *it;
+					heap->decreaseKey( 
+						otherVertex->heapPos, (*it)->cost );
+				}	
+			}
+		}	
+	}
+
+	return costMST;	
+	
+}	
+
 MinHeapNode** loadfromFile(const char* filename, 
 		vector<MinHeapNode*>& node_map,
 		vector<Edge*>& edge_map) {
@@ -127,7 +160,11 @@ int main(int argc, char** argv) {
 	vector<MinHeapNode*> myNodeMap;
 	vector<Edge*> myEdgeMap;
 	MinHeapNode** myHeapArray = loadfromFile(argv[IN_IDX], myNodeMap, myEdgeMap);
-	
+
+	int myMSTcost = Prim(myHeapArray, myNodeMap.size());
+
+	cout << "cost: " << myMSTcost << endl;
+
 	// no memory leaks here
 	for( auto it = myNodeMap.begin(); it != myNodeMap.end(); ++it ){
 		delete *it;
