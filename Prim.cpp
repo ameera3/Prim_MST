@@ -78,8 +78,8 @@ int Prim(MinHeapNode** hpArray, int size) {
 }	
 
 MinHeapNode** loadfromFile(const char* filename, 
-		vector<MinHeapNode*>& node_map,
-		vector<Edge*>& edge_map) {
+		vector<Edge*>& edge_map,
+		int* numV) {
 
 	// used to get each line from input file
 	string line;
@@ -103,23 +103,22 @@ MinHeapNode** loadfromFile(const char* filename,
 	// store the total number of vertices and edges
 	getline(*in, line);
 	ss << line; // storing line into stringstream
-	int numVertices, numEdges; // number of vertices and edges
 	ss >> temp; // extract number of vertices
-        stringstream(temp) >> numVertices;
+        stringstream(temp) >> *numV;
 	temp = ""; // clear temp
+	int numEdges; // number of edges
 	ss >> temp; // extract number of edges
 	stringstream(temp) >> numEdges;
 	temp = ""; // clear temp	
 	ss.str(""); // reset string stream to be empty
 	ss.clear(); // reset error flags
 
-	// create array of numVertices MinHeapNode* pointers
-	MinHeapNode** hpArray = new MinHeapNode*[numVertices];
+	// create array of numV MinHeapNode* pointers
+	MinHeapNode** hpArray = new MinHeapNode*[*numV];
 
-	// fill the array with MinHeapNodes and create the node map
-	for(int i = 0; i < numVertices; ++i) {
-		node_map.push_back( new MinHeapNode(i+1) );
-		hpArray[i] = node_map[i];
+	// fill the array with MinHeapNodes 
+	for(int i = 0; i < *numV; ++i) {
+		hpArray[i] = new MinHeapNode(i+1);
 	}
 
 	// to check if we parsed file correctly
@@ -140,8 +139,8 @@ MinHeapNode** loadfromFile(const char* filename,
 	        temp = ""; // clear temp
 		ss >> temp; // extract edge weight
 		stringstream(temp) >> weight;	
-		MinHeapNode* sourceNode = node_map[source-1];
-		MinHeapNode* destNode = node_map[dest-1];
+		MinHeapNode* sourceNode = hpArray[source-1];
+		MinHeapNode* destNode = hpArray[dest-1];
 		edge_map.push_back( 
 			new Edge(sourceNode, destNode, weight) );
 		(sourceNode->incidentEdges).push_back(
@@ -182,23 +181,27 @@ int main(int argc, char** argv) {
 		return -1;
 	}
 
-	// read input file and build the heap
-	vector<MinHeapNode*> myNodeMap;
+	// used to delete edges
 	vector<Edge*> myEdgeMap;
-	MinHeapNode** myHeapArray = loadfromFile(argv[IN_IDX], myNodeMap, myEdgeMap);
+
+	// number of vertices
+	int numVertices;
+
+	// read from the input file and create the heap
+	MinHeapNode** myHeapArray = loadfromFile(argv[IN_IDX], myEdgeMap, &numVertices);
 
 	// run Prim's algorithm
-	int myMSTcost = Prim(myHeapArray, myNodeMap.size());
+	int myMSTcost = Prim(myHeapArray, numVertices);
 
 	// output the cost of an MST
 	cout << "cost: " << myMSTcost << endl;
 
 	// no memory leaks here
-	for( auto it = myNodeMap.begin(); it != myNodeMap.end(); ++it ){
-		delete *it;
-	}
 	for( auto it = myEdgeMap.begin(); it != myEdgeMap.end(); ++it ){
 		delete *it;
+	}
+	for( int i = 0; i < numVertices; ++i ){
+		delete myHeapArray[i];
 	}
 	delete[] myHeapArray;	
 
