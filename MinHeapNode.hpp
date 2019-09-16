@@ -16,10 +16,10 @@ class Edge;
 /* Class Name: MinHeapNode
  * Instance Variables: label (integer vertex label)
  *                     cost (integer cost of cheapest edge connecting vertex 
- *		             to MST)
+ *		             to MST -- initially each vertex has cost INT_MAX)
  *		       heapPos (position in heap)
  *		       popped (bool indicating whether vertex has been popped from
- *		               heap or not)	     
+ *		               heap or not -- initially set to false)	     
  *		       connEdge (cheapest edge connecting vertex to MST)
  *		       incidentEdges (vector of edges incident with vertex)
  * Public Methods: Constructor
